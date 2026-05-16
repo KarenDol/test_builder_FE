@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { apiClientJson } from "@/lib/client-api"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -22,6 +22,9 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Clock, ChevronLeft, ChevronRight, Flag } from "lucide-react"
 import type { Question, Test, Submission } from "@/lib/types"
+import { MathOptionReadonly, MathQuestionStemView } from "@/components/math-question-view"
+import { QuestionReferenceTools } from "@/components/student/question-reference-tools"
+import { seededOptionIndices } from "@/lib/seeded-shuffle"
 
 interface TestTakingInterfaceProps {
   test: Test & {
@@ -61,6 +64,15 @@ export function TestTakingInterface({
   const questions = test.questions
   const currentQuestion = questions[currentQuestionIndex]
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100
+
+  const optionOrder = useMemo(() => {
+    const q = currentQuestion
+    const n = q.options.length
+    if (!(q.shuffle_answer_options ?? false)) {
+      return Array.from({ length: n }, (_, i) => i)
+    }
+    return seededOptionIndices(`${test.id}:${q.id}`, n)
+  }, [test.id, currentQuestion.id, currentQuestion.shuffle_answer_options, currentQuestion.options.length])
 
   useEffect(() => {
     const initSubmission = async () => {
@@ -238,17 +250,25 @@ export function TestTakingInterface({
 
             <Card>
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <CardTitle className="text-lg font-medium leading-relaxed">
-                    {currentQuestion.question_text}
-                  </CardTitle>
+                <CardTitle className="min-w-0 text-lg font-medium leading-relaxed">
+                  <MathQuestionStemView
+                    math={currentQuestion.math}
+                    fallbackText={currentQuestion.question_text}
+                    className="w-full"
+                  />
+                </CardTitle>
+                <CardAction>
                   <Badge variant="outline">{currentQuestion.points} pts</Badge>
-                </div>
+                </CardAction>
                 <p className="text-sm text-muted-foreground">
                   {currentQuestion.question_type === "single_choice"
                     ? "Select one answer"
                     : "Select all that apply"}
                 </p>
+                <QuestionReferenceTools
+                  showCalculator={Boolean(currentQuestion.show_calculator)}
+                  showPeriodicTable={Boolean(currentQuestion.show_periodic_table)}
+                />
               </CardHeader>
               <CardContent className="space-y-3">
                 {currentQuestion.question_type === "single_choice" ? (
@@ -257,7 +277,7 @@ export function TestTakingInterface({
                     value={
                       (answers[currentQuestion.id] || []).length > 0
                         ? String((answers[currentQuestion.id] || [])[0])
-                        : undefined
+                        : ""
                     }
                     onValueChange={(v) =>
                       setAnswers({
@@ -266,7 +286,8 @@ export function TestTakingInterface({
                       })
                     }
                   >
-                    {currentQuestion.options.map((option, index) => {
+                    {optionOrder.map((index) => {
+                      const option = currentQuestion.options[index] ?? ""
                       const selected = (answers[currentQuestion.id] || [])[0] === index
                       const optionId = `answer-${currentQuestion.id}-${index}`
                       return (
@@ -283,14 +304,21 @@ export function TestTakingInterface({
                             htmlFor={optionId}
                             className="min-w-0 flex-1 cursor-pointer text-base font-medium leading-relaxed"
                           >
-                            {option}
+                            {currentQuestion.math ? (
+                              <MathOptionReadonly
+                                latex={currentQuestion.math.options_latex[index] ?? option}
+                              />
+                            ) : (
+                              option
+                            )}
                           </Label>
                         </div>
                       )
                     })}
                   </RadioGroup>
                 ) : (
-                  currentQuestion.options.map((option, index) => {
+                  optionOrder.map((index) => {
+                    const option = currentQuestion.options[index] ?? ""
                     const isSelected = (answers[currentQuestion.id] || []).includes(index)
                     return (
                       <button
@@ -304,7 +332,15 @@ export function TestTakingInterface({
                         }`}
                       >
                         <Checkbox checked={isSelected} />
-                        <span>{option}</span>
+                        <span className="min-w-0 flex-1 text-base font-medium leading-relaxed">
+                          {currentQuestion.math ? (
+                            <MathOptionReadonly
+                              latex={currentQuestion.math.options_latex[index] ?? option}
+                            />
+                          ) : (
+                            option
+                          )}
+                        </span>
                       </button>
                     )
                   })

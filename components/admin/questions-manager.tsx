@@ -108,21 +108,26 @@ export function QuestionsManager({ initialQuestions, subjects }: QuestionsManage
         </CardHeader>
         <CardContent>
           {filteredQuestions.length > 0 ? (
-            <Table>
+            <Table className="table-fixed">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[40%]">Question</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Points</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[48%] min-w-0">Question</TableHead>
+                  <TableHead className="min-w-0">Subject</TableHead>
+                  <TableHead className="w-24">Type</TableHead>
+                  <TableHead className="w-14">Points</TableHead>
+                  <TableHead className="w-28 shrink-0 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredQuestions.map((question) => (
                   <TableRow key={question.id}>
-                    <TableCell className="font-medium">
-                      <p className="line-clamp-2">{question.question_text}</p>
+                    <TableCell className="max-w-0 min-w-0 font-medium whitespace-normal">
+                      <div
+                        className="truncate"
+                        title={question.question_text}
+                      >
+                        {question.question_text}
+                      </div>
                     </TableCell>
                     <TableCell>
                       {question.subjects?.name ? (
@@ -137,7 +142,7 @@ export function QuestionsManager({ initialQuestions, subjects }: QuestionsManage
                       </Badge>
                     </TableCell>
                     <TableCell>{question.points}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="w-28 shrink-0 text-right">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(question)}>
                         <Pencil className="h-4 w-4" />
                       </Button>

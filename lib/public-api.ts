@@ -6,3 +6,12 @@ export function getPublicApiBase(): string {
   }
   return base
 }
+
+/** Resolve an API-relative upload path (e.g. `/uploads/...`) to an absolute URL for `<img src>`. */
+export function apiAssetUrl(relativePath: string): string {
+  if (!relativePath) return ""
+  if (relativePath.startsWith("http://") || relativePath.startsWith("https://")) return relativePath
+  const base = getPublicApiBase()
+  const p = relativePath.startsWith("/") ? relativePath : `/${relativePath}`
+  return `${base}${p}`
+}

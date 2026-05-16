@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle2, XCircle, Trophy } from "lucide-react"
+import { MathOptionReadonly, MathQuestionStemView } from "@/components/math-question-view"
 import type { Submission, Test, Question, TestQuestion } from "@/lib/types"
 
 export interface TestWithQuestions extends Test {
@@ -136,12 +137,15 @@ export function SubmissionResultReview({ submission }: { submission: SubmissionD
                         {t("questionPoints", { earned: earnedPts, max: maxPts })}
                       </Badge>
                     </div>
-                    <p className="mb-3 font-medium text-foreground">{question.question_text}</p>
+                    <div className="mb-3 font-medium text-foreground">
+                      <MathQuestionStemView math={question.math} fallbackText={question.question_text} />
+                    </div>
 
                     <div className="space-y-2">
                       {(question.options as string[]).map((option, optIndex) => {
                         const isSelected = userIndices.includes(optIndex)
                         const isCorrectOption = correctIndices.includes(optIndex)
+                        const optLatex = question.math?.options_latex?.[optIndex]
 
                         return (
                           <div
@@ -161,7 +165,11 @@ export function SubmissionResultReview({ submission }: { submission: SubmissionD
                               {isSelected && !isCorrectOption && (
                                 <XCircle className="h-4 w-4 shrink-0 text-destructive" />
                               )}
-                              <span>{option}</span>
+                              {question.math ? (
+                                <MathOptionReadonly latex={optLatex ?? option} />
+                              ) : (
+                                <span>{option}</span>
+                              )}
                               {isSelected && (
                                 <Badge variant="secondary" className="ml-auto text-xs">
                                   {t("yourAnswer")}

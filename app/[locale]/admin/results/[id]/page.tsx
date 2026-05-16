@@ -1,8 +1,9 @@
+import { routing } from "@/i18n/routing"
 import AdminResultIdBody from "./admin-result-id-body"
 
-/** Static export requires ≥1 path; client still reads the real `id` from the URL after in-app navigation. */
+/** Static export: supply `locale` + `id`; real submission IDs work via client navigation / dev. */
 export async function generateStaticParams() {
-  return [{ id: "export-placeholder" }]
+  return routing.locales.map((locale) => ({ locale, id: "export-placeholder" }))
 }
 
 export default function AdminSubmissionDetailPage() {

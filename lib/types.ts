@@ -27,6 +27,12 @@ export interface Subject {
   created_at: string
 }
 
+export interface QuestionMathPayload {
+  stem_latex: string
+  options_latex: string[]
+  image_urls: string[]
+}
+
 export interface Question {
   id: string
   subject_id: string | null
@@ -35,10 +41,14 @@ export interface Question {
   options: string[]
   correct_answers: string[]
   points: number
+  shuffle_answer_options?: boolean
+  show_calculator?: boolean
+  show_periodic_table?: boolean
   created_by: string | null
   created_at: string
   updated_at: string
   subject?: Subject
+  math?: QuestionMathPayload | null
 }
 
 export interface Test {

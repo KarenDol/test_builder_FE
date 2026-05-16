@@ -19,6 +19,10 @@ type TestPayload = Test & {
       options: string[]
       correct_answers: number[]
       points: number
+      shuffle_answer_options?: boolean
+      show_calculator?: boolean
+      show_periodic_table?: boolean
+      math?: Question["math"]
     } | null
   }[]
 }
