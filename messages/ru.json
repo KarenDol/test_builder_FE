@@ -110,7 +110,39 @@
     "questionN": "Вопрос {n}",
     "questionPoints": "{earned} / {max} балл.",
     "yourAnswer": "Выбранный ответ",
-    "correctAnswer": "Верный ответ"
+    "correctAnswer": "Верный ответ",
+    "reportProblem": "Сообщить о проблеме",
+    "reported": "Отправлено",
+    "reportAlreadySent": "Жалоба по этому вопросу уже отправлена"
+  },
+  "QuestionReport": {
+    "title": "Сообщить о проблеме — вопрос {n}",
+    "description": "Опишите, что не так с этим вопросом. Администратор увидит ваше сообщение.",
+    "reasonLabel": "Тип проблемы",
+    "commentOptionalLabel": "Комментарий (необязательно)",
+    "commentRequiredLabel": "Комментарий (обязательно)",
+    "commentPlaceholder": "Дополнительные детали…",
+    "commentRequired": "Укажите комментарий для типа «Другое»",
+    "cancel": "Отмена",
+    "submit": "Отправить",
+    "submitting": "Отправка…",
+    "submitFailed": "Не удалось отправить",
+    "reasons": {
+      "no_correct_option": "Нет правильного варианта",
+      "mistake_in_question": "Ошибка в формулировке вопроса",
+      "wrong_correct_answer": "Неверно отмечен правильный ответ",
+      "unclear_wording": "Непонятная формулировка",
+      "other": "Другое"
+    }
+  },
+  "AdminQuestionReports": {
+    "title": "Жалобы на вопросы",
+    "subtitle": "Сообщения студентов при разборе тестов",
+    "empty": "Жалоб пока нет",
+    "student": "Студент",
+    "question": "Вопрос",
+    "unknownTest": "Тест",
+    "viewAttempt": "Открыть попытку"
   },
   "StudentResults": {
     "notFound": "Результат не найден",
@@ -157,6 +189,7 @@
     "tests": "Тесты",
     "students": "Студенты",
     "results": "Результаты",
+    "questionReports": "Жалобы",
     "studentDashboard": "Панель",
     "studentTests": "Доступные тесты",
     "studentResults": "Мои результаты",

@@ -10,6 +10,7 @@ import {
   ClipboardList,
   Users,
   BarChart3,
+  Flag,
   LogOut,
 } from "lucide-react"
 import { BrandLogo } from "@/components/brand-logo"
@@ -37,6 +38,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     { href: "/admin/tests", labelKey: "tests" as const, icon: ClipboardList },
     { href: "/admin/students", labelKey: "students" as const, icon: Users },
     { href: "/admin/results", labelKey: "results" as const, icon: BarChart3 },
+    { href: "/admin/question-reports", labelKey: "questionReports" as const, icon: Flag },
   ]
 
   const handleSignOut = async () => {

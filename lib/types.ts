@@ -74,6 +74,28 @@ export interface TestQuestion {
   question?: Question
 }
 
+export type QuestionReportReason =
+  | 'no_correct_option'
+  | 'mistake_in_question'
+  | 'wrong_correct_answer'
+  | 'unclear_wording'
+  | 'other'
+
+export interface QuestionReport {
+  id: string
+  submission_id: string
+  question_id: string
+  reason: QuestionReportReason
+  comment: string | null
+  created_at: string
+}
+
+export interface QuestionReportAdmin extends QuestionReport {
+  reporter?: { name: string | null; email: string | null }
+  test?: { id: string; title: string } | null
+  question_preview?: string | null
+}
+
 export interface Submission {
   id: string
   student_id: string
@@ -84,6 +106,7 @@ export interface Submission {
   percentage: number
   started_at: string
   submitted_at: string | null
+  question_reports?: QuestionReport[]
   test?: Test
   student?: Profile
 }

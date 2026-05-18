@@ -110,7 +110,39 @@
     "questionN": "Сұрақ {n}",
     "questionPoints": "{earned} / {max} ұпай",
     "yourAnswer": "Таңдалған жауап",
-    "correctAnswer": "Дұрыс жауап"
+    "correctAnswer": "Дұрыс жауап",
+    "reportProblem": "Мәселе туралы хабарлау",
+    "reported": "Жіберілді",
+    "reportAlreadySent": "Бұл сұрақ бойынша шағым жіберілген"
+  },
+  "QuestionReport": {
+    "title": "Мәселе туралы хабарлау — сұрақ {n}",
+    "description": "Бұл сұрақта не дұрыс емес екенін сипаттаңыз. Әкімші хабарламаңызды көреді.",
+    "reasonLabel": "Мәселе түрі",
+    "commentOptionalLabel": "Пікір (міндетті емес)",
+    "commentRequiredLabel": "Пікір (міндетті)",
+    "commentPlaceholder": "Қосымша мәліметтер…",
+    "commentRequired": "«Басқа» түрі үшін пікір жазыңыз",
+    "cancel": "Болдырмау",
+    "submit": "Жіберу",
+    "submitting": "Жіберілуде…",
+    "submitFailed": "Жіберу сәтсіз аяқталды",
+    "reasons": {
+      "no_correct_option": "Дұрыс нұсқа жоқ",
+      "mistake_in_question": "Сұрақта қате",
+      "wrong_correct_answer": "Дұрыс жауап қате белгіленген",
+      "unclear_wording": "Түсініксіз тұжырымдама",
+      "other": "Басқа"
+    }
+  },
+  "AdminQuestionReports": {
+    "title": "Сұрақтарға шағымдар",
+    "subtitle": "Студенттердің тестті талдау кезіндегі хабарламалары",
+    "empty": "Шағымдар жоқ",
+    "student": "Студент",
+    "question": "Сұрақ",
+    "unknownTest": "Тест",
+    "viewAttempt": "Тапсырманы ашу"
   },
   "StudentResults": {
     "notFound": "Нәтиже табылмады",
@@ -157,6 +189,7 @@
     "tests": "Тесттер",
     "students": "Студенттер",
     "results": "Нәтижелер",
+    "questionReports": "Шағымдар",
     "studentDashboard": "Басты бет",
     "studentTests": "Тесттер",
     "studentResults": "Нәтижелерім",

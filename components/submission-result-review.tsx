@@ -1,12 +1,15 @@
 "use client"
 
+import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { CheckCircle2, XCircle, Trophy } from "lucide-react"
+import { AlertTriangle, CheckCircle2, Flag, XCircle, Trophy } from "lucide-react"
 import { MathOptionReadonly, MathQuestionStemView } from "@/components/math-question-view"
-import type { Submission, Test, Question, TestQuestion } from "@/lib/types"
+import { QuestionReportDialog } from "@/components/question-report-dialog"
+import type { Question, QuestionReport, Submission, Test, TestQuestion } from "@/lib/types"
 
 export interface TestWithQuestions extends Test {
   test_questions: (TestQuestion & { questions: Question })[]
@@ -24,8 +27,29 @@ export function toIndices(raw: unknown): number[] {
     .filter((n) => !Number.isNaN(n))
 }
 
-export function SubmissionResultReview({ submission }: { submission: SubmissionDetail }) {
+export function SubmissionResultReview({
+  submission,
+  allowReport = false,
+  onReportSubmitted,
+}: {
+  submission: SubmissionDetail
+  allowReport?: boolean
+  onReportSubmitted?: () => void
+}) {
   const t = useTranslations("SubmissionReview")
+  const tReport = useTranslations("QuestionReport")
+  const [reportTarget, setReportTarget] = useState<{ questionId: string; index: number } | null>(
+    null,
+  )
+
+  const reportsByQuestion = useMemo(() => {
+    const map = new Map<string, QuestionReport>()
+    for (const r of submission.question_reports ?? []) {
+      map.set(r.question_id, r)
+    }
+    return map
+  }, [submission.question_reports])
+
   if (!submission.tests) return null
 
   const answersRaw = submission.answers as Record<string, unknown>
@@ -101,6 +125,7 @@ export function SubmissionResultReview({ submission }: { submission: SubmissionD
               userIndices.every((a) => correctIndices.includes(a))
             const maxPts = Number(question.points) || 0
             const earnedPts = isCorrect ? maxPts : 0
+            const existingReport = reportsByQuestion.get(question.id)
 
             return (
               <div
@@ -136,6 +161,12 @@ export function SubmissionResultReview({ submission }: { submission: SubmissionD
                       >
                         {t("questionPoints", { earned: earnedPts, max: maxPts })}
                       </Badge>
+                      {existingReport && (
+                        <Badge variant="secondary" className="gap-1 text-xs">
+                          <Flag className="h-3 w-3" />
+                          {t("reported")}
+                        </Badge>
+                      )}
                     </div>
                     <div className="mb-3 font-medium text-foreground">
                       <MathQuestionStemView math={question.math} fallbackText={question.question_text} />
@@ -188,6 +219,43 @@ export function SubmissionResultReview({ submission }: { submission: SubmissionD
                         )
                       })}
                     </div>
+
+                    {existingReport && !allowReport && (
+                      <div className="mt-3 rounded-md border border-amber-500/40 bg-amber-50/80 px-3 py-2 text-sm dark:bg-amber-950/30">
+                        <div className="flex gap-2">
+                          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-400" />
+                          <div>
+                            <p className="font-medium text-amber-900 dark:text-amber-100">
+                              {tReport(`reasons.${existingReport.reason}`)}
+                            </p>
+                            {existingReport.comment && (
+                              <p className="mt-1 text-muted-foreground">{existingReport.comment}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {allowReport && submission.submitted_at && (
+                      <div className="mt-4">
+                        {existingReport ? (
+                          <p className="text-sm text-muted-foreground">{t("reportAlreadySent")}</p>
+                        ) : (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() =>
+                              setReportTarget({ questionId: question.id, index: index + 1 })
+                            }
+                          >
+                            <Flag className="h-4 w-4" />
+                            {t("reportProblem")}
+                          </Button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -195,6 +263,17 @@ export function SubmissionResultReview({ submission }: { submission: SubmissionD
           })}
         </CardContent>
       </Card>
+
+      {reportTarget && (
+        <QuestionReportDialog
+          open={Boolean(reportTarget)}
+          onOpenChange={(open) => !open && setReportTarget(null)}
+          submissionId={submission.id}
+          questionId={reportTarget.questionId}
+          questionNumber={reportTarget.index}
+          onSuccess={() => onReportSubmitted?.()}
+        />
+      )}
     </div>
   )
 }

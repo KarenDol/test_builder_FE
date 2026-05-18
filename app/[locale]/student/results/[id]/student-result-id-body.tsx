@@ -69,7 +69,11 @@ export default function StudentResultIdBody() {
         </div>
       </div>
 
-      <SubmissionResultReview submission={submission} />
+      <SubmissionResultReview
+        submission={submission}
+        allowReport
+        onReportSubmitted={fetchSubmission}
+      />
 
       <div className="flex justify-center gap-4">
         <Button variant="outline" asChild>
